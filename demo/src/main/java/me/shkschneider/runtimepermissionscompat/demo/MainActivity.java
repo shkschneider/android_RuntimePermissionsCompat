@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(final AdapterView<?> adapterView, final View view, final int position, final long id) {
                 final Permission permission = mArrayAdapter.getItem(position);
+                final boolean shouldPrompt = RuntimePermissionsCompat.shouldPrompt(MainActivity.this, permission.name);
                 if (RuntimePermissionsCompat.isGranted(MainActivity.this, permission.name)) {
                     Toast.makeText(MainActivity.this, "Permission already GRANTED", Toast.LENGTH_SHORT).show();
                     // return ;

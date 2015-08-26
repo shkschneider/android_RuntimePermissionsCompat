@@ -29,6 +29,10 @@ public class RuntimePermissionsCompat {
         return (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED);
     }
 
+    public static boolean shouldPrompt(@NonNull final Activity activity, @NonNull final String permission) {
+        return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission);
+    }
+
     public static void requestPermission(@NonNull final Activity activity, @NonNull final String[] permissions) {
         if (Build.VERSION.SDK_INT < MARSHMALLOW) {
             try {
