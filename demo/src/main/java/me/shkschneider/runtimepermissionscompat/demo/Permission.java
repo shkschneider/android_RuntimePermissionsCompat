@@ -27,7 +27,7 @@ public class Permission {
             case PermissionInfo.PROTECTION_DANGEROUS:
                 return "PROTECTION_DANGEROUS";
             default:
-                return "PROTECTION LEVEL UNKNOWN";
+                return "<UNKNOWN>";
         }
     }
 

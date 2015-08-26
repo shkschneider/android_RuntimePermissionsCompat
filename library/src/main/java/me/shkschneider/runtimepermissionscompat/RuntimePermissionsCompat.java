@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.lang.reflect.Method;
@@ -24,22 +26,13 @@ public class RuntimePermissionsCompat {
     }
 
     public static boolean isGranted(@NonNull final Context context, @NonNull final String permission) {
-        if (Build.VERSION.SDK_INT < MARSHMALLOW) {
-            final PackageManager packageManager = context.getPackageManager();
-            if (packageManager == null) {
-                return false;
-            }
-            return (packageManager.checkPermission(permission, context.getPackageName()) == PackageManager.PERMISSION_GRANTED);
-        }
-
-        return (context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
+        return (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED);
     }
 
     public static void requestPermission(@NonNull final Activity activity, @NonNull final String[] permissions) {
         if (Build.VERSION.SDK_INT < MARSHMALLOW) {
-            Log.i(TAG, "No Runtime Permissions");
             try {
-                Log.i(TAG, "Trying to call Activity.onRequestPermissionsResult()");
+                Log.i(TAG, "No Runtime Permissions -- bridging to Activity.onRequestPermissionsResult()");
                 final Method method = activity.getClass().getMethod("onRequestPermissionsResult", int.class, String[].class, int[].class);
                 method.setAccessible(true);
                 final int[] grantResults = new int[permissions.length];
@@ -66,21 +59,11 @@ public class RuntimePermissionsCompat {
             activity.onRequestPermissionsResult(REQUEST_CODE, permissions, grantResults);
             return ;
         }
-        activity.requestPermissions(permissions, REQUEST_CODE);
-    }
-
-    public static boolean isNeverAskAgain(@NonNull final Activity activity, @NonNull final String permission) {
-        if (Build.VERSION.SDK_INT < MARSHMALLOW) {
-            Log.d(TAG, "No Runtime Permissions -- assuming NOT NEVER_ASK_AGAIN");
-            return false;
-        }
-
-        return activity.shouldShowRequestPermissionRationale(permission);
+        ActivityCompat.requestPermissions(activity, permissions, REQUEST_CODE);
     }
 
     public static boolean isRevocable(@NonNull final Context context, @NonNull final String permission) {
         if (Build.VERSION.SDK_INT < MARSHMALLOW) {
-            Log.d(TAG, "No Runtime Permissions -- assuming NOT REVOCABLE");
             return false;
         }
 
@@ -92,6 +75,8 @@ public class RuntimePermissionsCompat {
             final PermissionInfo permissionInfo = packageManager.getPermissionInfo(permission, 0);
             @SuppressLint("InlinedApi") // API-16+
             final int protectionLevel = (permissionInfo.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE);
+            // FIXME CHANGE_NETWORK_STATE GET_ACCOUNTS normal instead of dangerous?
+            // <https://stackoverflow.com/q/32208863>
             return (protectionLevel != PermissionInfo.PROTECTION_NORMAL);
         }
         catch (final Exception e) {
