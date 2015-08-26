@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RuntimePermissionsCompat {
 
@@ -29,6 +31,7 @@ public class RuntimePermissionsCompat {
             }
             return (packageManager.checkPermission(permission, context.getPackageName()) == PackageManager.PERMISSION_GRANTED);
         }
+
         return (context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
     }
 
@@ -50,34 +53,29 @@ public class RuntimePermissionsCompat {
             }
             return ;
         }
+
+        int alreadyGranted = 0;
+        for (final String permission : permissions) {
+            alreadyGranted += (isGranted(activity, permission) ? 1 : 0);
+        }
+        if (alreadyGranted == permissions.length) {
+            final int[] grantResults = new int[alreadyGranted];
+            for (int i = 0; i < alreadyGranted; i++) {
+                grantResults[i] = PackageManager.PERMISSION_GRANTED;
+            }
+            activity.onRequestPermissionsResult(REQUEST_CODE, permissions, grantResults);
+            return ;
+        }
         activity.requestPermissions(permissions, REQUEST_CODE);
     }
 
-    public static boolean areAllGranted(@NonNull final int[] grantResults) {
-        for (final int grantResult : grantResults) {
-            if (grantResult == PackageManager.PERMISSION_DENIED) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public static boolean isGranted(@NonNull final Context context, @NonNull final String permission, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+    public static boolean isNeverAskAgain(@NonNull final Activity activity, @NonNull final String permission) {
         if (Build.VERSION.SDK_INT < MARSHMALLOW) {
-            Log.i(TAG, "No Runtime Permissions -- bridging to PackageManager.checkPermission()");
-            return isGranted(context, permission);
+            Log.d(TAG, "No Runtime Permissions -- assuming NOT NEVER_ASK_AGAIN");
+            return false;
         }
-        int index = -1;
-        for (int i = 0; i < permissions.length; i++) {
-            if (permissions[i].equals(permission)) {
-                index = i;
-                break ;
-            }
-        }
-        if (index == -1) {
-            return isGranted(context, permission);
-        }
-        return (grantResults[index] == PackageManager.PERMISSION_GRANTED);
+
+        return activity.shouldShowRequestPermissionRationale(permission);
     }
 
     public static boolean isRevocable(@NonNull final Context context, @NonNull final String permission) {
@@ -85,6 +83,7 @@ public class RuntimePermissionsCompat {
             Log.d(TAG, "No Runtime Permissions -- assuming NOT REVOCABLE");
             return false;
         }
+
         final PackageManager packageManager = context.getPackageManager();
         if (packageManager == null) {
             return false;
@@ -99,6 +98,17 @@ public class RuntimePermissionsCompat {
             Log.e(TAG, e.getMessage(), e);
             return false;
         }
+    }
+
+    public static Map<String, Boolean> onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+        if (requestCode == REQUEST_CODE) {
+            final Map<String, Boolean> results = new HashMap<>();
+            for (int i = 0; i < permissions.length; i++) {
+                results.put(permissions[i], ((grantResults[i] == PackageManager.PERMISSION_GRANTED) ? Boolean.TRUE : Boolean.FALSE));
+            }
+            return results;
+        }
+        return null;
     }
 
 }

@@ -2,6 +2,7 @@ package me.shkschneider.runtimepermissionscompat.demo;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
 import android.graphics.Color;
 import android.net.Uri;
@@ -19,6 +20,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Map;
 
 import me.shkschneider.runtimepermissionscompat.RuntimePermissionsCompat;
 
@@ -117,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 final Permission permission = mArrayAdapter.getItem(position);
                 if (RuntimePermissionsCompat.isGranted(MainActivity.this, permission.name)) {
                     Toast.makeText(MainActivity.this, "Permission already GRANTED", Toast.LENGTH_SHORT).show();
-                    return ;
+                    // return ;
                 }
                 RuntimePermissionsCompat.requestPermission(MainActivity.this, new String[] { permission.name });
             }
@@ -134,11 +137,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
+        final Map<String, Boolean> runtimePermissionsResults = RuntimePermissionsCompat.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (runtimePermissionsResults != null) {
+            final boolean granted = runtimePermissionsResults.get(permissions[0]);
+            Toast.makeText(MainActivity.this, (granted ? "Permission GRANTED" : "Permission DENIED"), Toast.LENGTH_SHORT).show();
+            return ;
+        }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        RuntimePermissionsCompat.isGranted(MainActivity.this, permissions[0], permissions, grantResults);
-        final boolean granted = RuntimePermissionsCompat.isGranted(MainActivity.this, permissions[0], permissions, grantResults);
-        //                      RuntimePermissionsCompat.areAllGranted(grantResults)
-        Toast.makeText(MainActivity.this, (granted ? "Permission GRANTED" : "Permission DENIED"), Toast.LENGTH_SHORT).show();
     }
 
 }
