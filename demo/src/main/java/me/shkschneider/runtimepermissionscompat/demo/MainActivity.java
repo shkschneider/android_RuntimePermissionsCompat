@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 add(new Permission(Manifest.permission.DISABLE_KEYGUARD, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.EXPAND_STATUS_BAR, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.FLASHLIGHT, PermissionInfo.PROTECTION_NORMAL));
-                add(new Permission(Manifest.permission.GET_ACCOUNTS, PermissionInfo.PROTECTION_NORMAL));
+                add(new Permission(Manifest.permission.GET_ACCOUNTS, PermissionInfo.PROTECTION_DANGEROUS));
                 add(new Permission(Manifest.permission.GET_PACKAGE_SIZE, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.INTERNET, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.MODIFY_AUDIO_SETTINGS, PermissionInfo.PROTECTION_NORMAL));
@@ -116,12 +116,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(final AdapterView<?> adapterView, final View view, final int position, final long id) {
                 final Permission permission = mArrayAdapter.getItem(position);
-                final boolean shouldPrompt = RuntimePermissionsCompat.shouldPrompt(MainActivity.this, permission.name);
                 if (RuntimePermissionsCompat.isGranted(MainActivity.this, permission.name)) {
                     Toast.makeText(MainActivity.this, "Permission already GRANTED", Toast.LENGTH_SHORT).show();
                     // return ;
                 }
-                RuntimePermissionsCompat.requestPermission(MainActivity.this, new String[] { permission.name });
+                else if (RuntimePermissionsCompat.shouldPrompt(MainActivity.this, permission.name)) {
+                    // Explain WHY you need this permission
+                    Toast.makeText(MainActivity.this, "Explain WHY you need this permission", Toast.LENGTH_SHORT).show();
+                }
+                RuntimePermissionsCompat.requestPermission(MainActivity.this, permission.name);
             }
 
         });

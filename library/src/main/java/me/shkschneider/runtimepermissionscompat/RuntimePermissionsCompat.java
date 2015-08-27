@@ -29,11 +29,42 @@ public class RuntimePermissionsCompat {
         return (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED);
     }
 
+    public static boolean isAnyGranted(@NonNull final Context context, @NonNull final String[] permissions) {
+        for (final String permission : permissions) {
+            if (isGranted(context, permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean areAllGranted(@NonNull final Context context, @NonNull final String[] permissions) {
+        for (final String permission : permissions) {
+            if (! isGranted(context, permission)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean shouldPrompt(@NonNull final Activity activity, @NonNull final String permission) {
         return ActivityCompat.shouldShowRequestPermissionRationale(activity, permission);
     }
 
-    public static void requestPermission(@NonNull final Activity activity, @NonNull final String[] permissions) {
+    public static boolean shouldPrompt(@NonNull final Activity activity, @NonNull final String[] permissions) {
+        for (final String permission : permissions) {
+            if (shouldPrompt(activity, permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void requestPermission(@NonNull final Activity activity, @NonNull final String permission) {
+        requestPermissions(activity, new String[] { permission });
+    }
+
+    public static void requestPermissions(@NonNull final Activity activity, @NonNull final String[] permissions) {
         if (Build.VERSION.SDK_INT < MARSHMALLOW) {
             try {
                 Log.i(TAG, "No Runtime Permissions -- bridging to Activity.onRequestPermissionsResult()");
@@ -87,6 +118,24 @@ public class RuntimePermissionsCompat {
             Log.e(TAG, e.getMessage(), e);
             return false;
         }
+    }
+
+    public static boolean isAnyRevocable(@NonNull final Context context, @NonNull final String[] permissions) {
+        for (final String permission : permissions) {
+            if (isRevocable(context, permission)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean areAllRevocable(@NonNull final Context context, @NonNull final String[] permissions) {
+        for (final String permission : permissions) {
+            if (! isRevocable(context, permission)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static Map<String, Boolean> onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions, @NonNull final int[] grantResults) {
