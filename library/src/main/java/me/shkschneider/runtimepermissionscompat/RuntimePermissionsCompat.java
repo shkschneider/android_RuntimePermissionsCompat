@@ -64,6 +64,7 @@ public class RuntimePermissionsCompat {
         requestPermissions(activity, new String[] { permission });
     }
 
+    @SuppressLint("NewApi")
     public static void requestPermissions(@NonNull final Activity activity, @NonNull final String[] permissions) {
         if (Build.VERSION.SDK_INT < MARSHMALLOW) {
             try {
@@ -110,8 +111,6 @@ public class RuntimePermissionsCompat {
             final PermissionInfo permissionInfo = packageManager.getPermissionInfo(permission, 0);
             @SuppressLint("InlinedApi") // API-16+
             final int protectionLevel = (permissionInfo.protectionLevel & PermissionInfo.PROTECTION_MASK_BASE);
-            // FIXME CHANGE_NETWORK_STATE GET_ACCOUNTS normal instead of dangerous?
-            // <https://stackoverflow.com/q/32208863>
             return (protectionLevel != PermissionInfo.PROTECTION_NORMAL);
         }
         catch (final Exception e) {

@@ -61,13 +61,13 @@ public class MainActivity extends AppCompatActivity {
                 add(new Permission(Manifest.permission.BROADCAST_STICKY, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.CALL_PHONE, PermissionInfo.PROTECTION_DANGEROUS));
                 add(new Permission(Manifest.permission.CAMERA, PermissionInfo.PROTECTION_DANGEROUS));
-                add(new Permission(Manifest.permission.CHANGE_NETWORK_STATE, PermissionInfo.PROTECTION_NORMAL));
+                add(new Permission(Manifest.permission.CHANGE_NETWORK_STATE, PermissionInfo.PROTECTION_NORMAL)); // FIXME
                 add(new Permission(Manifest.permission.CHANGE_WIFI_MULTICAST_STATE, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.CHANGE_WIFI_STATE, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.DISABLE_KEYGUARD, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.EXPAND_STATUS_BAR, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.FLASHLIGHT, PermissionInfo.PROTECTION_NORMAL));
-                add(new Permission(Manifest.permission.GET_ACCOUNTS, PermissionInfo.PROTECTION_DANGEROUS));
+                add(new Permission(Manifest.permission.GET_ACCOUNTS, PermissionInfo.PROTECTION_NORMAL)); // FIXME
                 add(new Permission(Manifest.permission.GET_PACKAGE_SIZE, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.INTERNET, PermissionInfo.PROTECTION_NORMAL));
                 add(new Permission(Manifest.permission.MODIFY_AUDIO_SETTINGS, PermissionInfo.PROTECTION_NORMAL));
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else if (RuntimePermissionsCompat.shouldPrompt(MainActivity.this, permission.name)) {
                     // Explain WHY you need this permission
-                    Toast.makeText(MainActivity.this, "Explain WHY you need this permission", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Explain WHY you need this permission", Toast.LENGTH_LONG).show();
                 }
                 RuntimePermissionsCompat.requestPermission(MainActivity.this, permission.name);
             }
