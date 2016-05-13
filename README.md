@@ -1,4 +1,4 @@
-RuntimePermissionsCompat [![JitPack](https://img.shields.io/github/tag/shkschneider/android_RuntimePermissionsCompat.svg?label=JitPack)](https://jitpack.io/#shkschneider/android_RuntimePermissionsCompat/1.0.0)
+RuntimePermissionsCompat [![JitPack](https://img.shields.io/github/tag/shkschneider/android_RuntimePermissionsCompat.svg?label=JitPack)](https://jitpack.io/#shkschneider/android_RuntimePermissionsCompat/1.1.0)
 ========================
 
 - [Runtime Permissions](https://developer.android.com/preview/features/runtime-permissions.html) helper library for pre-and-post API-23
@@ -27,14 +27,14 @@ Add this library dependency:
 
 <pre>dependencies {
     // ...
-    compile 'com.github.shkschneider:android_RuntimePermissionsCompat:1.0.0@aar'
+    compile 'com.github.shkschneider:android_RuntimePermissionsCompat:1.1.0'
 }</pre>
 
 See [demo/build.gradle](https://github.com/shkschneider/android_RuntimePermissionsCompat/blob/master/demo/build.gradle).
 
 **AAR**
 
-https://jitpack.io/com/github/shkschneider/android_RuntimePermissionsCompat/1.0.0/android_RuntimePermissionsCompat-1.0.0.aar
+https://jitpack.io/com/github/shkschneider/android_RuntimePermissionsCompat/1.1.0/android_RuntimePermissionsCompat-1.1.0.aar
 
 Specifications
 --------------
